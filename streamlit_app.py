@@ -1,46 +1,9 @@
 import numpy as np
 import pickle
-import pandas as pd
 import streamlit as st
-from sklearn.base import BaseEstimator, TransformerMixin
-from sklearn.preprocessing import LabelEncoder
-from sklearn.compose import ColumnTransformer
 
 # Modelin yüklenmesi
 loaded_model = pickle.load(open('bank_marketing_prediction.sav', 'rb'))
-
-# Kategorik sütunlar için özel etiketleyici dönüştürücü
-class CustomLabelEncoder(BaseEstimator, TransformerMixin):
-    def _init_(self, columns):
-        self.columns = columns
-        self.encoders = {}
-
-    def fit(self, X, y=None):
-        for col in self.columns:
-            encoder = LabelEncoder()
-            encoder.fit(X[col])
-            self.encoders[col] = encoder
-        return self
-
-    def transform(self, X):
-        X = X.copy()
-        for col, encoder in self.encoders.items():
-            X[col] = encoder.transform(X[col])
-        return X
-
-class FeaturesAdder(BaseEstimator, TransformerMixin):
-    def _init_(self):
-        pass
-
-    def fit(self, X, y=None):
-        return self
-
-    def transform(self, X):
-        X_new = X.copy()
-        X_new['previous_campaign_success_rate'] = X_new['previous'] / (X_new['pdays'] + 1)
-        X_new['pdays_group'] = pd.cut(X_new['pdays'], bins=[-1, 0, 30, 90, 180, 999], labels=[0, 1, 2, 3, 4])
-        X_new['age_education_level'] = X_new['age'] * X_new['education'].astype('category').cat.codes
-        return X_new
 
 def bank_marketing_prediction(input_data):
     # Özellik isimlerini eğitim verileriyle eşleştirin
