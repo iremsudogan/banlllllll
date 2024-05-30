@@ -49,8 +49,8 @@ def bank_marketing_prediction(input_data):
                     'poutcome', 'emp.var.rate', 'cons.price.idx', 'cons.conf.idx', 
                     'euribor3m', 'nr.employed']  # Alt çizgi yerine nokta kullanın
 
-    input_df = pd.DataFrame([input_data], columns=column_names)
-    prediction = loaded_model.predict(input_df)
+    input_data = pd.DataFrame([input_data], columns=column_names)
+    prediction = loaded_model.predict(input_data)
     return prediction[0]
 
 
